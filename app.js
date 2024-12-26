@@ -49,7 +49,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
         console.log("Formulario procesado:", formData);
 
-        // Aquí puedes enviar el `formData` a un servidor o generar un PDF
-        alert("Formulario enviado. Revisa la consola para más detalles.");
+        // Enviar los datos al Google Apps Script
+        fetch("https://script.google.com/macros/s/AKfycbzGTuhOk_M8-JtGdzIJuhZrbMLMk7FzXlSMoWDvFlB57vi13sVek2_EAe_ATayo9lLR/exec", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log("Respuesta del servidor:", data);
+            alert("Formulario enviado correctamente.");
+        })
+        .catch(error => {
+            console.error("Error al enviar el formulario:", error);
+            alert("Ocurrió un error al enviar el formulario.");
+        });
     });
 });
