@@ -106,33 +106,37 @@ document.addEventListener("DOMContentLoaded", function () {
           // Agregar firmas al formData
           formData.Firmas = firmas;
   
-          const response = await fetch(
-            "https://script.google.com/macros/s/AKfycbzGTuhOk_M8-JtGdzIJuhZrbMLMk7FzXlSMoWDvFlB57vi13sVek2_EAe_ATayo9lLR/exec",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(formData),
-            }
-          );
+          // URL del Apps Script
+          const endpointURL = "https://script.google.com/macros/s/AKfycbzGTuhOk_M8-JtGdzIJuhZrbMLMk7FzXlSMoWDvFlB57vi13sVek2_EAe_ATayo9lLR/exec";
+  
+          const response = await fetch(endpointURL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
   
           if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Error del servidor:", errorText);
             alert(`Error al enviar los datos: ${response.status} - ${response.statusText}`);
             return;
           }
   
           const result = await response.json();
+          console.log("Respuesta del servidor:", result);
+  
           if (result.success) {
             alert("Datos enviados con éxito.");
             form.reset();
             signaturePads.forEach((pad) => pad.clear());
           } else {
-            alert("Error al enviar los datos.");
+            alert("Error al enviar los datos: " + (result.error || "Error desconocido."));
           }
         } catch (error) {
           console.error("Error al enviar los datos:", error);
-          alert("Hubo un problema al enviar el formulario.");
+          alert("Hubo un problema al enviar el formulario. Por favor intenta de nuevo.");
         } finally {
           // Restaurar botón de enviar
           submitButton.disabled = false;
@@ -143,4 +147,3 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error('Formulario con ID "form" no encontrado.');
     }
   });
-  
